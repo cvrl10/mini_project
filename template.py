@@ -2,10 +2,11 @@ import pandas as pd
 import re
 import glob
 from pathlib import Path
+import os
 import xlsxwriter
 
 path = r'100048497'
-#path = r'100040000'
+path = r'100040000'
 directory = Path(path)
 
 print(directory)
@@ -58,7 +59,6 @@ class Template:
         worksheet.write_dynamic_array_formula('L2', '=(_xlfn.ANCHORARRAY(Q2)+_xlfn.ANCHORARRAY(K2))/2')
 
         worksheet.write('M1', 'Frequency')
-        #worksheet.write_formula()
 
         worksheet.write('O1', 'start_bin')
         worksheet.write_formula('O2', '=FLOOR(E2,J2)')
@@ -69,17 +69,72 @@ class Template:
         worksheet.write('Q1', 'data_for_mid_calc')
         worksheet.write_formula('Q2', '=SEQUENCE(INT((P2-O2)/J2)+1,1,O2+J2,J2)')
 
+        worksheet.write('R1', 'length')
+        worksheet.write_formula('R2', '=ROWS(_xlfn.ANCHORARRAY(K2))')
+
         #worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&_xlfn.ANCHORARRAY(K2), B2:B{end_row}, "<"&(_xlfn.ANCHORARRAY(K2)+$J$2))''')
         worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&(_xlfn.ANCHORARRAY(K2)-$J$2), B2:B{end_row}, "<"&_xlfn.ANCHORARRAY(K2))''')#used this equation to match exactly what Gyan does
 
+        chart = self.writer.book.add_chart(
+            {'type': 'column'}
+        )
 
+        line = self.writer.book.add_chart(
+            {'type': 'line'}
+        )
 
+        workbook.define_name(f'bin_{path.stem}', f'={path.stem}!$K$2:INDEX({path.stem}!$K:$K,2+COUNT(_xlfn.ANCHORARRAY({path.stem}!$K$2))-1)')
+        #workbook.define_name(f'bin_{path.stem}', f'={path.stem}!$L$2:INDEX({path.stem}!$L:$L,2+COUNT(_xlfn.ANCHORARRAY({path.stem}!$L$2))-1)')
+        workbook.define_name(f'frequencies_{path.stem}', f'={path.stem}!$M$2:INDEX({path.stem}!$M:$M,2+COUNT(_xlfn.ANCHORARRAY({path.stem}!$M$2))-1)')
 
+        chart.add_series(
+            {#'name': f'PSD graph for {path.stem}',
+             'categories': f'={path.stem}!bin_{path.stem}',
+             'values': f'={path.stem}!frequencies_{path.stem}',
+             'gap': 0},
+        )
+
+        line.add_series(
+            {'categories': f'={path.stem}!bin_{path.stem}',
+             'values': f'={path.stem}!frequencies_{path.stem}',
+             'smooth': True,
+             'line': {
+                 'color': 'red'},
+             'marker': {'type': 'none'}}
+        )
+
+        chart.set_legend({'none': True})
+        chart.set_title({'name': f'PSD graph for {path.stem}'})
+
+        chart.set_x_axis({
+            'name': 'Particle Size (nm)',
+            'major_tick_mark': 'none',
+            'position_axis': 'between',
+            'min': 0,
+        })
+        chart.set_y_axis({
+            'name': 'Frequency',
+            'major_tick_mark': 'none',
+            'min': 0,
+            'major_gridlines': {'visible': False}
+        })
+
+        '''line.set_y_axis({
+            'position_axis': 'on_tick'
+        })'''
+
+        chart.combine(line)
+        #line.combine(chart)
+        #worksheet.insert_chart('E10', line)
+        worksheet.insert_chart('E10', chart)
 
     def create_sheets(self):
         for file in self.files:
             self._create_sheet(file)
         self.writer.close()
+
+        os.startfile(self.directory/'output.xlsx')
+
 
 template = Template(directory)
 
