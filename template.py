@@ -3,7 +3,7 @@ import re
 import glob
 from pathlib import Path
 import os
-import xlsxwriter
+from math import ceil, floor
 
 path = r'100048497'
 path = r'100040000'
@@ -35,11 +35,16 @@ class Template:
         end_row = len(df)+1
         print(f'end_row = {end_row}')
 
+        start_bin = floor(df['Particle Size (nm)'].min()/2)*2
+        end_bin = ceil(df['Particle Size (nm)'].max()/2)*2
+
+        #x_axis =
+
         workbook = self.writer.book
         header_format = workbook.add_format({'bottom': 1,
                                              'bold': True})
 
-        hide_format = workbook.add_format({'font_color': 'white'})
+        hide_format = workbook.add_format({'font_color': 'black'})
 
         worksheet = self.writer.sheets[path.stem]
         worksheet.write(0, 0, 'Particle (N)', header_format)
@@ -84,9 +89,95 @@ class Template:
         worksheet.write('Q1', 'data_for_mid_calc')
         worksheet.write_dynamic_array_formula('Q2', '=SEQUENCE(INT((P2-O2)/J2)+1,1,O2+J2,J2)')
 
-        self._create_chart(sheet_name=path.stem)
+        worksheet.write('R1', 'zeros')
+        worksheet.write_dynamic_array_formula('R2', '=SEQUENCE(INT((P2-O2)/J2)+1,1,0,0)')
 
-    def _create_chart(self, sheet_name):
+        self._create_chart(sheet_name=path.stem, df=df)
+        #self._create_chart_og(sheet_name=path.stem)
+
+    def _create_chart(self, sheet_name, df):
+        workbook = self.writer.book
+        worksheet = self.writer.sheets[sheet_name]
+
+        start_bin = floor(df['Particle Size (nm)'].min()/2) * 2
+        end_bin = (ceil(df['Particle Size (nm)'].max()/2) * 2) + 2
+
+        x_axis = range(start_bin, end_bin+2, 2)
+        print(len(x_axis))
+        x_axis = list(x_axis)
+        print(f'{sheet_name} x-axis: {x_axis}')
+
+        print(f'{start_bin}')
+        print(f'{end_bin}')
+
+        width = len(x_axis)
+        print(f'{sheet_name} width: {width}')
+
+        workbook.define_name(f'bin_{sheet_name}', f'={sheet_name}!$K$2:INDEX({sheet_name}!$K:$K,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$K$2))-1)')
+        workbook.define_name(f'mid_{sheet_name}', f'={sheet_name}!$L$2:INDEX({sheet_name}!$L:$L,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$L$2))-1)')
+        workbook.define_name(f'zeros_{sheet_name}', f'={sheet_name}!$R$2:INDEX({sheet_name}!$R:$R,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$R$2))-1)')
+        workbook.define_name(f'frequencies_{sheet_name}', f'={sheet_name}!$M$2:INDEX({sheet_name}!$M:$M,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$M$2))-1)')
+
+
+        chart = workbook.add_chart({
+            'type': 'scatter',
+            'subtype': 'smooth'
+        })
+
+        #column = workbook.add_chart(
+            #{'type': 'column'}
+        #)
+
+
+
+        chart.set_legend({'none': True})
+        chart.set_title({'name': f'PSD graph for {sheet_name}'})
+
+        chart.set_x_axis({
+            'name': 'Particle Size (nm)',
+            'major_tick_mark': 'none',
+            #'position_axis': 'between',
+            'min': start_bin,
+            'max': end_bin,
+            'major_unit': 2
+        })
+
+        chart.set_y_axis({
+            'name': 'Frequency',
+            'major_tick_mark': 'none',
+            'min': 0,
+            'major_gridlines': {'visible': False}
+        })
+
+        chart.add_series({
+            'categories': f'={sheet_name}!mid_{sheet_name}',
+            'values': f'={sheet_name}!frequencies_{sheet_name}',
+            'line': {
+                'color': 'red',
+                'dash_type': 'solid'
+            },
+            'y_error_bars': {
+                'type': 'percentage',
+                'value': 100,
+                'direction': 'minus',
+                'end_style': 0,
+                'line': {
+                    'color': '#ED7D31',
+                    'width': width
+                }
+            }
+        })
+
+        #column.add_series(
+            #{'categories': f'={sheet_name}!bin_{sheet_name}',
+                #'values': f'={sheet_name}!frequencies_{sheet_name}',
+                #'gap': 0},
+        #)
+
+        #chart.combine(column)
+        worksheet.insert_chart('D5', chart)
+
+    def _create_chart_og(self, sheet_name):
         workbook = self.writer.book
         worksheet = self.writer.sheets[sheet_name]
 
@@ -99,17 +190,28 @@ class Template:
         )
 
         workbook.define_name(f'bin_{sheet_name}', f'={sheet_name}!$K$2:INDEX({sheet_name}!$K:$K,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$K$2))-1)')
-        # workbook.define_name(f'bin_{sheet_name}', f'={sheet_name}!$L$2:INDEX({sheet_name}!$L:$L,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$L$2))-1)')
+        workbook.define_name(f'mid_{sheet_name}', f'={sheet_name}!$L$2:INDEX({sheet_name}!$L:$L,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$L$2))-1)')
+        workbook.define_name(f'zeros_{sheet_name}', f'={sheet_name}!$R$2:INDEX({sheet_name}!$R:$R,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$R$2))-1)')
         workbook.define_name(f'frequencies_{sheet_name}', f'={sheet_name}!$M$2:INDEX({sheet_name}!$M:$M,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$M$2))-1)')
 
+        '''
         chart.add_series(
             {'categories': f'={sheet_name}!bin_{sheet_name}',
+                'values': f'={sheet_name}!zeros_{sheet_name}',
+                'gap': 6},
+        )
+        '''
+
+        chart.add_series(
+            {'categories': f'={sheet_name}!mid_{sheet_name}',
                 'values': f'={sheet_name}!frequencies_{sheet_name}',
-                'gap': 0},
+                'fill': {'color': '#ED7D31'},
+                #'overlap': 100,
+                'gap': 6},
         )
 
         line.add_series(
-            {'categories': f'={sheet_name}!bin_{sheet_name}',
+            {'categories': f'={sheet_name}!mid_{sheet_name}',
              'values': f'={sheet_name}!frequencies_{sheet_name}',
              'smooth': True,
              'line': {
@@ -123,6 +225,7 @@ class Template:
         chart.set_x_axis({
             'name': 'Particle Size (nm)',
             'major_tick_mark': 'none',
+            #'position_axis': 'on_tick',
             'position_axis': 'between',
             'min': 0,
         })
@@ -133,9 +236,9 @@ class Template:
             'major_gridlines': {'visible': False}
         })
 
-        '''line.set_y_axis({
+        line.set_y_axis({
             'position_axis': 'on_tick'
-        })'''
+        })
 
         chart.combine(line)
         #line.combine(chart)
