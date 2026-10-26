@@ -35,8 +35,15 @@ class Template:
         end_row = len(df)+1
         print(f'end_row = {end_row}')
 
-        #workbook = self.writer.book
+        workbook = self.writer.book
+        header_format = workbook.add_format({'bottom': 1,
+                                             'bold': True})
+
+        hide_format = workbook.add_format({'font_color': 'white'})
+
         worksheet = self.writer.sheets[path.stem]
+        worksheet.write(0, 0, 'Particle (N)', header_format)
+        worksheet.write(0, 1, 'Particle Size (nm)', header_format)
         worksheet.autofit()
 
         worksheet.write('E1', 'min')
@@ -61,18 +68,21 @@ class Template:
         worksheet.write_dynamic_array_formula('L2', '=(_xlfn.ANCHORARRAY(Q2)+_xlfn.ANCHORARRAY(K2))/2')
 
         worksheet.write('M1', 'Frequency')
-
-        worksheet.write('O1', 'start_bin')
-        worksheet.write_formula('O2', '=FLOOR(E2,J2)')
-
-        worksheet.write('P1', 'end_bin')
-        worksheet.write_formula('P2', '=CEILING(F2,J2)')
-
-        worksheet.write('Q1', 'data_for_mid_calc')
-        worksheet.write_formula('Q2', '=SEQUENCE(INT((P2-O2)/J2)+1,1,O2+J2,J2)')
-
         #worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&_xlfn.ANCHORARRAY(K2), B2:B{end_row}, "<"&(_xlfn.ANCHORARRAY(K2)+$J$2))''')
         worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&(_xlfn.ANCHORARRAY(K2)-$J$2), B2:B{end_row}, "<"&_xlfn.ANCHORARRAY(K2))''')#used this equation to match exactly what Gyan does
+
+        worksheet.write('O1', 'start_bin', hide_format)
+        worksheet.write_formula('O2', '=FLOOR(E2,J2)', hide_format)
+
+        worksheet.write('P1', 'end_bin', hide_format)
+        worksheet.write_formula('P2', '=CEILING(F2,J2)', hide_format)
+
+        worksheet.conditional_format(f'Q1:Q{end_row}', {'type': 'no_blanks',
+                                                        'format': hide_format}
+        )#this to hide the data_for_mid_calc column
+
+        worksheet.write('Q1', 'data_for_mid_calc')
+        worksheet.write_dynamic_array_formula('Q2', '=SEQUENCE(INT((P2-O2)/J2)+1,1,O2+J2,J2)')
 
         self._create_chart(sheet_name=path.stem)
 
@@ -93,8 +103,7 @@ class Template:
         workbook.define_name(f'frequencies_{sheet_name}', f'={sheet_name}!$M$2:INDEX({sheet_name}!$M:$M,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$M$2))-1)')
 
         chart.add_series(
-            {  # 'name': f'PSD graph for {path.stem}',
-                'categories': f'={sheet_name}!bin_{sheet_name}',
+            {'categories': f'={sheet_name}!bin_{sheet_name}',
                 'values': f'={sheet_name}!frequencies_{sheet_name}',
                 'gap': 0},
         )
@@ -129,8 +138,8 @@ class Template:
         })'''
 
         chart.combine(line)
-        # line.combine(chart)
-        # worksheet.insert_chart('E10', line)
+        #line.combine(chart)
+        #worksheet.insert_chart('E10', line)
         worksheet.insert_chart('D5', chart)
 
     def create_sheets(self):
