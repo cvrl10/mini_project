@@ -14,8 +14,8 @@ print(directory)
 class Template:
     def __init__(self, directory: Path):
         self.directory = directory
-        self.writer = pd.ExcelWriter(self.directory / 'output.xlsx', engine='xlsxwriter')
-
+        self.writer = pd.ExcelWriter(self.directory / 'output.xlsm', engine='xlsxwriter')
+        self.writer.book.add_vba_project('vbaProject.bin')
     @property
     def files(self):
         source_files = []
@@ -101,6 +101,7 @@ class Template:
 
         start_bin = floor(df['Particle Size (nm)'].min()/2) * 2
         end_bin = (ceil(df['Particle Size (nm)'].max()/2) * 2) + 2
+
 
         x_axis = range(start_bin, end_bin+2, 2)
         print(len(x_axis))
@@ -250,7 +251,7 @@ class Template:
             self._create_sheet(file)
 
         self.writer.close()
-        os.startfile(self.directory/'output.xlsx')
+        os.startfile(self.directory/'output.xlsm')
 
 
 template = Template(directory)
