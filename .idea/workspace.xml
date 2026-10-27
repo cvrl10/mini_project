@@ -5,13 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7a5f83f0-6a07-4e6c-99fd-dec6f6610c8d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/gui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/mini_project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/mini_project.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/100040000/output.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/output.xlsm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/100040000/raw_data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/raw_data.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040000/output.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/100048497/output.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/100048497/output.xlsm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100048497/output.xlsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/macro.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/macro.xlsm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macro_binary.py" beforeDir="false" afterPath="$PROJECT_DIR$/macro_binary.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template.py" beforeDir="false" afterPath="$PROJECT_DIR$/template.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vbaProject.bin" beforeDir="false" afterPath="$PROJECT_DIR$/vbaProject.bin" afterDir="false" />
     </list>
@@ -42,17 +44,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.macro_binary.executor&quot;: &quot;Run&quot;,
-    &quot;Python.template.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.gui.executor": "Run",
+    "Python.macro_binary.executor": "Run",
+    "Python.template.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

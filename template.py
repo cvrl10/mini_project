@@ -1,44 +1,40 @@
 import pandas as pd
 import re
-import glob
 from pathlib import Path
 import os
 from math import ceil, floor
 
 path = r'100048497'
-#path = r'100040000'
+path = r'100040000'
 directory = Path(path)
 
 print(directory)
 
 class Template:
-    def __init__(self, directory: Path):
-        self.directory = directory
-        self.writer = pd.ExcelWriter(self.directory / 'output.xlsm', engine='xlsxwriter')
+    def __init__(self, data_folder: Path):
+        self.directory = data_folder
+        self.writer = pd.ExcelWriter(self.directory / f'{self.directory.name}_.xlsm', engine='xlsxwriter')
         self.writer.book.add_vba_project('vbaProject.bin')
+
     @property
     def files(self):
         source_files = []
-        for file in glob.glob(str(self.directory.resolve()/'*')):
-            if re.fullmatch(f'[0-9]+', Path(file).stem):
-                source_files.append(Path(file).name)
+        for path in self.directory.resolve().glob('*'):
+            if re.fullmatch(f'[0-9]+', path.stem):
+                source_files.append(path.name)
         source_files.sort()
         return source_files
 
     def _create_sheet(self, file: str):
         path = self.directory / file
         print(f'inside _create_sheet {path}')
+        sheet_name = path.stem
         df = pd.read_excel(path, header=None, names=['Particle (N)', 'Particle Size (nm)'])
 
-        df.to_excel(self.writer, sheet_name=path.stem, index=False)
+        df.to_excel(self.writer, sheet_name=sheet_name, index=False)
         print(df)
         end_row = len(df)+1
         print(f'end_row = {end_row}')
-
-        start_bin = floor(df['Particle Size (nm)'].min()/2)*2
-        end_bin = ceil(df['Particle Size (nm)'].max()/2)*2
-
-        #x_axis =
 
         workbook = self.writer.book
         header_format = workbook.add_format({'bottom': 1,
@@ -46,7 +42,7 @@ class Template:
 
         hide_format = workbook.add_format({'font_color': 'white'})
 
-        worksheet = self.writer.sheets[path.stem]
+        worksheet = self.writer.sheets[sheet_name]
         worksheet.write(0, 0, 'Particle (N)', header_format)
         worksheet.write(0, 1, 'Particle Size (nm)', header_format)
         worksheet.autofit()
@@ -89,14 +85,14 @@ class Template:
         worksheet.write('Q1', 'data_for_mid_calc')
         worksheet.write_dynamic_array_formula('Q2', '=SEQUENCE(INT((P2-O2)/J2)+1,1,O2+J2,J2)')
 
-        self._create_chart(sheet_name=path.stem, df=df)
+        self._create_chart(sheet_name=sheet_name, series=df['Particle Size (nm)'])
 
-    def _create_chart(self, sheet_name, df):
+    def _create_chart(self, sheet_name: str, series: pd.Series):
         workbook = self.writer.book
         worksheet = self.writer.sheets[sheet_name]
 
-        start_bin = floor(df['Particle Size (nm)'].min()/2) * 2
-        end_bin = (ceil(df['Particle Size (nm)'].max()/2) * 2) + 2
+        start_bin = floor(series.min()/2) * 2
+        end_bin = (ceil(series.max()/2) * 2)
 
 
         x_axis = range(start_bin, end_bin+2, 2)
@@ -107,12 +103,9 @@ class Template:
         print(f'{start_bin}')
         print(f'{end_bin}')
 
-        width = len(x_axis)
-        print(f'{sheet_name} width: {width}')
+        #width = len(x_axis)
 
-        workbook.define_name(f'bin_{sheet_name}', f'={sheet_name}!$K$2:INDEX({sheet_name}!$K:$K,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$K$2))-1)')
         workbook.define_name(f'mid_{sheet_name}', f'={sheet_name}!$L$2:INDEX({sheet_name}!$L:$L,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$L$2))-1)')
-        workbook.define_name(f'zeros_{sheet_name}', f'={sheet_name}!$R$2:INDEX({sheet_name}!$R:$R,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$R$2))-1)')
         workbook.define_name(f'frequencies_{sheet_name}', f'={sheet_name}!$M$2:INDEX({sheet_name}!$M:$M,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$M$2))-1)')
 
 
@@ -127,7 +120,6 @@ class Template:
         chart.set_x_axis({
             'name': 'Particle Size (nm)',
             'major_tick_mark': 'none',
-            #'position_axis': 'between',
             'min': start_bin,
             'max': end_bin,
             'major_unit': 2
@@ -155,12 +147,12 @@ class Template:
                 'end_style': 0,
                 'line': {
                     'color': '#ED7D31',
-                    'width': width
+                    #'width': width
                 }
             }
         })
 
-        worksheet.insert_textbox('D5', f'''Average Particle Size: {df['Particle Size (nm)'].mean():.2f} {chr(177)} {df['Particle Size (nm)'].std():.2f} nm''',
+        worksheet.insert_textbox('D5', f'''Average Particle Size: {series.mean():.2f} {chr(177)} {series.std():.2f} nm''',
                                  {'width': 400,
                                   'font': {'bold': True},
                                   'line': {'none': True},
@@ -181,8 +173,8 @@ class Template:
             self._create_sheet(file)
 
         self.writer.close()
-        os.startfile(self.directory/'output.xlsm')
+        os.startfile(self.directory/f'{self.directory.name}_.xlsm')
 
 
-template = Template(directory)
+template = Template(data_folder=directory)
 template.create_sheets()
