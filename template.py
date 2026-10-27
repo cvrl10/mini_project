@@ -6,7 +6,7 @@ import os
 from math import ceil, floor
 
 path = r'100048497'
-path = r'100040000'
+#path = r'100040000'
 directory = Path(path)
 
 print(directory)
@@ -44,7 +44,7 @@ class Template:
         header_format = workbook.add_format({'bottom': 1,
                                              'bold': True})
 
-        hide_format = workbook.add_format({'font_color': 'black'})
+        hide_format = workbook.add_format({'font_color': 'white'})
 
         worksheet = self.writer.sheets[path.stem]
         worksheet.write(0, 0, 'Particle (N)', header_format)
@@ -73,8 +73,8 @@ class Template:
         worksheet.write_dynamic_array_formula('L2', '=(_xlfn.ANCHORARRAY(Q2)+_xlfn.ANCHORARRAY(K2))/2')
 
         worksheet.write('M1', 'Frequency')
-        #worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&_xlfn.ANCHORARRAY(K2), B2:B{end_row}, "<"&(_xlfn.ANCHORARRAY(K2)+$J$2))''')
-        worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&(_xlfn.ANCHORARRAY(K2)-$J$2), B2:B{end_row}, "<"&_xlfn.ANCHORARRAY(K2))''')#used this equation to match exactly what Gyan does
+        worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&_xlfn.ANCHORARRAY(K2), B2:B{end_row}, "<"&(_xlfn.ANCHORARRAY(K2)+$J$2))''')
+        #worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&(_xlfn.ANCHORARRAY(K2)-$J$2), B2:B{end_row}, "<"&_xlfn.ANCHORARRAY(K2))''')#used this equation to match exactly what Gyan does
 
         worksheet.write('O1', 'start_bin', hide_format)
         worksheet.write_formula('O2', '=FLOOR(E2,J2)', hide_format)
@@ -89,11 +89,7 @@ class Template:
         worksheet.write('Q1', 'data_for_mid_calc')
         worksheet.write_dynamic_array_formula('Q2', '=SEQUENCE(INT((P2-O2)/J2)+1,1,O2+J2,J2)')
 
-        worksheet.write('R1', 'zeros')
-        worksheet.write_dynamic_array_formula('R2', '=SEQUENCE(INT((P2-O2)/J2)+1,1,0,0)')
-
         self._create_chart(sheet_name=path.stem, df=df)
-        #self._create_chart_og(sheet_name=path.stem)
 
     def _create_chart(self, sheet_name, df):
         workbook = self.writer.book
@@ -125,12 +121,6 @@ class Template:
             'subtype': 'smooth'
         })
 
-        #column = workbook.add_chart(
-            #{'type': 'column'}
-        #)
-
-
-
         chart.set_legend({'none': True})
         chart.set_title({'name': f'PSD graph for {sheet_name}'})
 
@@ -155,7 +145,8 @@ class Template:
             'values': f'={sheet_name}!frequencies_{sheet_name}',
             'line': {
                 'color': 'red',
-                'dash_type': 'solid'
+                'dash_type': 'solid',
+                'width': 0.5
             },
             'y_error_bars': {
                 'type': 'percentage',
@@ -169,81 +160,20 @@ class Template:
             }
         })
 
-        #column.add_series(
-            #{'categories': f'={sheet_name}!bin_{sheet_name}',
-                #'values': f'={sheet_name}!frequencies_{sheet_name}',
-                #'gap': 0},
-        #)
-
-        #chart.combine(column)
-        worksheet.insert_chart('D5', chart)
-
-    def _create_chart_og(self, sheet_name):
-        workbook = self.writer.book
-        worksheet = self.writer.sheets[sheet_name]
-
-        chart = workbook.add_chart(
-            {'type': 'column'}
-        )
-
-        line = workbook.add_chart(
-            {'type': 'line'}
-        )
-
-        workbook.define_name(f'bin_{sheet_name}', f'={sheet_name}!$K$2:INDEX({sheet_name}!$K:$K,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$K$2))-1)')
-        workbook.define_name(f'mid_{sheet_name}', f'={sheet_name}!$L$2:INDEX({sheet_name}!$L:$L,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$L$2))-1)')
-        workbook.define_name(f'zeros_{sheet_name}', f'={sheet_name}!$R$2:INDEX({sheet_name}!$R:$R,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$R$2))-1)')
-        workbook.define_name(f'frequencies_{sheet_name}', f'={sheet_name}!$M$2:INDEX({sheet_name}!$M:$M,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$M$2))-1)')
-
+        worksheet.insert_textbox('D5', f'''Average Particle Size: {df['Particle Size (nm)'].mean():.2f} {chr(177)} {df['Particle Size (nm)'].std():.2f} nm''',
+                                 {'width': 400,
+                                  'font': {'bold': True},
+                                  'line': {'none': True},
+                                  'fill': {'none': True}
+            })
+        #delete this
         '''
-        chart.add_series(
-            {'categories': f'={sheet_name}!bin_{sheet_name}',
-                'values': f'={sheet_name}!zeros_{sheet_name}',
-                'gap': 6},
-        )
-        '''
-
-        chart.add_series(
-            {'categories': f'={sheet_name}!mid_{sheet_name}',
-                'values': f'={sheet_name}!frequencies_{sheet_name}',
-                'fill': {'color': '#ED7D31'},
-                #'overlap': 100,
-                'gap': 6},
-        )
-
-        line.add_series(
-            {'categories': f'={sheet_name}!mid_{sheet_name}',
-             'values': f'={sheet_name}!frequencies_{sheet_name}',
-             'smooth': True,
-             'line': {
-                 'color': 'red'},
-             'marker': {'type': 'none'}}
-        )
-
-        chart.set_legend({'none': True})
-        chart.set_title({'name': f'PSD graph for {sheet_name}'})
-
-        chart.set_x_axis({
-            'name': 'Particle Size (nm)',
-            'major_tick_mark': 'none',
-            #'position_axis': 'on_tick',
-            'position_axis': 'between',
-            'min': 0,
-        })
-        chart.set_y_axis({
-            'name': 'Frequency',
-            'major_tick_mark': 'none',
-            'min': 0,
-            'major_gridlines': {'visible': False}
-        })
-
-        line.set_y_axis({
-            'position_axis': 'on_tick'
-        })
-
-        chart.combine(line)
-        #line.combine(chart)
-        #worksheet.insert_chart('E10', line)
+        chart.set_plotarea({
+            'border': {
+                'color': 'black',
+                'width': 1
+            }
+        })'''
         worksheet.insert_chart('D5', chart)
 
     def create_sheets(self):
