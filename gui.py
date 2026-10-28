@@ -1,36 +1,55 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
+from template import Template, Path
+from tooltip import Tooltip
 
+DEFAULT_TEXT = 'Please select the folder containing your data files.'
 class App:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry('500x250')
+        self.root.withdraw()
+
+        self.root.title('particle size distribution (PSD)')
+        self.root.iconbitmap('img/logo.ico')
+
+        self.root.geometry('500x70')
+        self.root.resizable(False, False)
+
         self.root.columnconfigure(0, weight=0)
         self.root.columnconfigure(1, weight=1)
 
         self.root.rowconfigure(0, weight=1)
         self.root.rowconfigure(1, weight=1)
 
-        button = ttk.Button(self.root, text='DATA FOLDER', command=lambda: self._data_folder())
-        button.grid(column=0, row=0, sticky='ew', padx=(10,0))
+        self.style = ttk.Style()
+        self.style.configure('NoFocus.TButton', focusthickness=0)
 
-        self.label = ttk.Label(self.root, text='')
-        self.label.grid(column=1, row=0, sticky='ew', padx=(0,10))
+        button = ttk.Button(self.root, text='DATA FOLDER', command=lambda: self._data_folder(), style='NoFocus.TButton')
+        button.grid(column=0, row=0, sticky='ew', padx=(10, 0))
 
-        button = ttk.Button(self.root, text='CREATE WORKBOOK', command=lambda: self._create_workbook())
+        self.label = ttk.Label(self.root, text=DEFAULT_TEXT)
+        self.label.grid(column=1, row=0, sticky='ew', padx=(0, 10))
+
+        Tooltip(self.label, DEFAULT_TEXT)
+
+        button = ttk.Button(self.root, text='CREATE WORKBOOK', command=lambda: self._create_workbook(), style='NoFocus.TButton')
         button.grid(row=1, column=0, columnspan=2)
 
     def _data_folder(self):
         data_folder = filedialog.askdirectory(parent=self.root, title='data folder')
-        self.label.configure(text=f'{data_folder}')
+        if data_folder:
+            self.label.configure(text=f'{data_folder}')
+        else:
+            self.label.configure(text=DEFAULT_TEXT)
 
     def _create_workbook(self):
-        print('clicked')
+        data_folder = self.label.cget('text')
+        if data_folder == DEFAULT_TEXT:
+            return
+        data_folder = Path(data_folder)
+        template = Template(data_folder=data_folder)
+        template.create_sheets()
 
     def run(self):
+        self.root.deiconify()
         self.root.mainloop()
-
-
-
-app = App()
-app.run()
