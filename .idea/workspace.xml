@@ -5,21 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7a5f83f0-6a07-4e6c-99fd-dec6f6610c8d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/mini_project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/mini_project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/100040000/_100040000.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/_100040000.xlsm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/100040001/100040001_.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/100040001/100040001_.xlsm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PARTICLE_SIZE_DISTRIBUTION.spec" beforeDir="false" afterPath="$PROJECT_DIR$/PARTICLE_SIZE_DISTRIBUTION.spec" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/Analysis-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/EXE-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PARTICLE_SIZE_DISTRIBUTION.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PARTICLE_SIZE_DISTRIBUTION.pkg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PKG-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PYZ-00.pyz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PYZ-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/base_library.zip" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/base_library.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/warn-PARTICLE_SIZE_DISTRIBUTION.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/warn-PARTICLE_SIZE_DISTRIBUTION.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/xref-PARTICLE_SIZE_DISTRIBUTION.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/xref-PARTICLE_SIZE_DISTRIBUTION.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/PARTICLE_SIZE_DISTRIBUTION.EXE" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PARTICLE_SIZE_DISTRIBUTION.EXE" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui.py" afterDir="false" />
     </list>
@@ -50,19 +41,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.PARTICLE_SIZE_DISTRIBUTION.executor": "Run",
-    "Python.gui.executor": "Run",
-    "Python.macro_binary.executor": "Run",
-    "Python.template.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.PARTICLE_SIZE_DISTRIBUTION.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.macro_binary.executor&quot;: &quot;Run&quot;,
+    &quot;Python.template.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

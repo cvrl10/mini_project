@@ -3,7 +3,7 @@ from tkinter import ttk, filedialog
 from template import Template, Path
 from tooltip import Tooltip
 
-DEFAULT_TEXT = 'Please select the folder containing your data files.'
+DEFAULT_TEXT = 'Please select the folder containing your data file(s).'
 
 class App:
     def __init__(self):
