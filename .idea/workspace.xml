@@ -5,14 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7a5f83f0-6a07-4e6c-99fd-dec6f6610c8d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/PARTICLE_SIZE_DISTRIBUTION.spec" beforeDir="false" afterPath="$PROJECT_DIR$/PARTICLE_SIZE_DISTRIBUTION.spec" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/Analysis-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/EXE-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PARTICLE_SIZE_DISTRIBUTION.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PARTICLE_SIZE_DISTRIBUTION.pkg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PKG-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/PYZ-00.pyz" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/base_library.zip" beforeDir="false" afterPath="$PROJECT_DIR$/build/PARTICLE_SIZE_DISTRIBUTION/base_library.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/PARTICLE_SIZE_DISTRIBUTION.EXE" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PARTICLE_SIZE_DISTRIBUTION.EXE" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
