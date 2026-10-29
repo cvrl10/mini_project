@@ -4,13 +4,15 @@ from template import Template, Path
 from tooltip import Tooltip
 
 DEFAULT_TEXT = 'Please select the folder containing your data files.'
+
 class App:
     def __init__(self):
         self.root = tk.Tk()
         self.root.withdraw()
 
-        self.root.title('particle size distribution (PSD)')
-        self.root.iconbitmap('img/logo.ico')
+        self.root.title('PARTICLE SIZE DISTRIBUTION (PSD)')
+        #self.root.iconbitmap('img/logo.ico')
+        self.root.iconbitmap('img/blank.ico')
 
         self.root.geometry('500x70')
         self.root.resizable(False, False)
@@ -21,7 +23,7 @@ class App:
         self.root.rowconfigure(0, weight=1)
         self.root.rowconfigure(1, weight=1)
 
-        button = ttk.Button(self.root, text='DATA FOLDER', command=lambda: self._askdirectory(), takefocus=False)
+        button = ttk.Button(self.root, text='DATA FOLDER', command=self._askdirectory, takefocus=False)
         button.grid(column=0, row=0, sticky='ew', padx=(10, 0))
 
         self.label = ttk.Label(self.root, text=DEFAULT_TEXT)
@@ -29,7 +31,7 @@ class App:
 
         Tooltip(self.label, DEFAULT_TEXT)
 
-        button = ttk.Button(self.root, text='CREATE WORKBOOK', command=lambda: self._create_workbook(), takefocus=False)
+        button = ttk.Button(self.root, text='CREATE WORKBOOK', command=self._create_workbook, takefocus=False)
         button.grid(row=1, column=0, columnspan=2)
 
     def _askdirectory(self):
