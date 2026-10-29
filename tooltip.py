@@ -2,7 +2,6 @@ import tkinter as tk
 
 AUTO_CLOSE = 3000
 
-
 class Tooltip:
     def __init__(self, widget, default: str):
         self.default = default

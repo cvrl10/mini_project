@@ -4,17 +4,15 @@ from pathlib import Path
 import os
 from math import ceil, floor
 
-path = r'100048497'
-path = r'100040000'
-path = r'100040001'
-directory = Path(path)
-
-print(directory)
+#path = r'100048497'
+#path = r'100040000'
+#path = r'100040001'
+#directory = Path(path)
 
 class Template:
     def __init__(self, data_folder: Path):
         self.directory = data_folder
-        self.writer = pd.ExcelWriter(self.directory / f'{self.directory.name}_.xlsm', engine='xlsxwriter')
+        self.writer = pd.ExcelWriter(self.directory / f'_{self.directory.name}.xlsm', engine='xlsxwriter')
         self.writer.book.add_vba_project('vbaProject.bin')
 
     @property
@@ -60,8 +58,16 @@ class Template:
         worksheet.write('H1', 'std')
         worksheet.write('H2', df['Particle Size (nm)'].std())
 
-        worksheet.write('J1', 'bin_size')
-        worksheet.write('J2', 2)
+        worksheet.write('J1', 'bin_size', workbook.add_format({
+            'bg_color': '#000000',
+            'font_color': '#FFFFFF',
+            'italic': True,
+            'bold': True
+        }))
+        worksheet.write('J2', 2, workbook.add_format({
+            'italic': True,
+            'bold': True
+        }))
 
         worksheet.write('K1', 'Bin')
         worksheet.write_formula('K2', '=SEQUENCE(INT((P2-O2)/J2)+1,1,O2,J2)')
@@ -95,7 +101,6 @@ class Template:
         start_bin = floor(series.min()/2) * 2
         end_bin = (ceil(series.max()/2) * 2)
 
-
         x_axis = range(start_bin, end_bin+2, 2)
         print(len(x_axis))
         x_axis = list(x_axis)
@@ -108,7 +113,6 @@ class Template:
 
         workbook.define_name(f'mid_{sheet_name}', f'={sheet_name}!$L$2:INDEX({sheet_name}!$L:$L,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$L$2))-1)')
         workbook.define_name(f'frequencies_{sheet_name}', f'={sheet_name}!$M$2:INDEX({sheet_name}!$M:$M,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$M$2))-1)')
-
 
         chart = workbook.add_chart({
             'type': 'scatter',
@@ -157,16 +161,8 @@ class Template:
                                  {'width': 400,
                                   'font': {'bold': True},
                                   'line': {'none': True},
-                                  'fill': {'none': True}
-            })
-        #delete this
-        '''
-        chart.set_plotarea({
-            'border': {
-                'color': 'black',
-                'width': 1
-            }
-        })'''
+                                  'fill': {'none': True}})
+
         worksheet.insert_chart('D5', chart)
 
     def create_sheets(self):
@@ -174,7 +170,7 @@ class Template:
             self._create_sheet(file)
 
         self.writer.close()
-        os.startfile(self.directory/f'{self.directory.name}_.xlsm')
+        os.startfile(self.directory/f'_{self.directory.name}.xlsm')
 
 
 #template = Template(data_folder=directory)
