@@ -21,7 +21,7 @@ class App:
         self.root.rowconfigure(0, weight=1)
         self.root.rowconfigure(1, weight=1)
 
-        button = ttk.Button(self.root, text='DATA FOLDER', command=lambda: self._data_folder(), takefocus=False)
+        button = ttk.Button(self.root, text='DATA FOLDER', command=lambda: self._askdirectory(), takefocus=False)
         button.grid(column=0, row=0, sticky='ew', padx=(10, 0))
 
         self.label = ttk.Label(self.root, text=DEFAULT_TEXT)
@@ -32,7 +32,7 @@ class App:
         button = ttk.Button(self.root, text='CREATE WORKBOOK', command=lambda: self._create_workbook(), takefocus=False)
         button.grid(row=1, column=0, columnspan=2)
 
-    def _data_folder(self):
+    def _askdirectory(self):
         data_folder = filedialog.askdirectory(parent=self.root, title='Select Folder')
         if data_folder:
             self.label.configure(text=f'{data_folder}')
