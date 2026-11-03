@@ -16,9 +16,6 @@ class Tooltip:
         self.after_id = self.widget.after(500, self.show)
 
     def show(self):
-        if self.tip_window:
-            return
-
         if self.widget.cget('text') == self.default:
             return
 
@@ -48,11 +45,7 @@ class Tooltip:
     def hide(self):
         if self.tip_window:
             self.tip_window.destroy()
-            self.tip_window = None
 
     def cancel_tip(self, event):
-        if self.after_id:
-            self.widget.after_cancel(self.after_id)
-            self.after_id = None
-
+        self.widget.after_cancel(self.after_id)
         self.hide()

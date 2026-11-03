@@ -26,14 +26,11 @@ class Template:
 
     def _create_sheet(self, file: str):
         path = self.directory / file
-        print(f'inside _create_sheet {path}')
         sheet_name = path.stem
         df = pd.read_excel(path, header=None, names=['Particle (N)', 'Particle Size (nm)'])
-
         df.to_excel(self.writer, sheet_name=sheet_name, index=False)
-        print(df)
+
         end_row = len(df)+1
-        print(f'end_row = {end_row}')
 
         workbook = self.writer.book
         header_format = workbook.add_format({'bottom': 1,
@@ -64,6 +61,7 @@ class Template:
             'italic': True,
             'bold': True
         }))
+
         worksheet.write('J2', 2, workbook.add_format({
             'italic': True,
             'bold': True
@@ -100,16 +98,6 @@ class Template:
 
         start_bin = floor(series.min()/2) * 2
         end_bin = (ceil(series.max()/2) * 2)
-
-        x_axis = range(start_bin, end_bin+2, 2)
-        print(len(x_axis))
-        x_axis = list(x_axis)
-        print(f'{sheet_name} x-axis: {x_axis}')
-
-        print(f'{start_bin}')
-        print(f'{end_bin}')
-
-        #width = len(x_axis)
 
         workbook.define_name(f'mid_{sheet_name}', f'={sheet_name}!$L$2:INDEX({sheet_name}!$L:$L,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$L$2))-1)')
         workbook.define_name(f'frequencies_{sheet_name}', f'={sheet_name}!$M$2:INDEX({sheet_name}!$M:$M,2+COUNT(_xlfn.ANCHORARRAY({sheet_name}!$M$2))-1)')
@@ -151,8 +139,7 @@ class Template:
                 'direction': 'minus',
                 'end_style': 0,
                 'line': {
-                    'color': '#ED7D31',
-                    #'width': width
+                    'color': '#ED7D31'
                 }
             }
         })
@@ -171,7 +158,3 @@ class Template:
 
         self.writer.close()
         os.startfile(self.directory/f'_{self.directory.name}.xlsm')
-
-
-#template = Template(data_folder=directory)
-#template.create_sheets()

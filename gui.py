@@ -11,7 +11,6 @@ class App:
         self.root.withdraw()
 
         self.root.title('PARTICLE SIZE DISTRIBUTION (PSD)')
-        #self.root.iconbitmap('img/logo.ico')
         self.root.iconbitmap('img/blank.ico')
 
         self.root.geometry('500x70')
@@ -45,6 +44,7 @@ class App:
         data_folder = self.label.cget('text')
         if data_folder == DEFAULT_TEXT:
             return
+
         data_folder = Path(data_folder)
         template = Template(data_folder=data_folder)
         template.create_sheets()
