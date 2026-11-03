@@ -9,13 +9,14 @@ class Tooltip:
         self.tip_window = None
         self.after_id = None
 
-        widget.bind('<Enter>', self.schedule_tip)
-        widget.bind('<Leave>', self.cancel_tip)
+    def bind(self):
+        self.widget.bind('<Enter>', self._schedule_tip)
+        self.widget.bind('<Leave>', self._cancel_tip)
 
-    def schedule_tip(self, event):
-        self.after_id = self.widget.after(500, self.show)
+    def _schedule_tip(self, event):
+        self.after_id = self.widget.after(500, self._show)
 
-    def show(self):
+    def _show(self):
         if self.widget.cget('text') == self.default:
             return
 
@@ -40,12 +41,12 @@ class Tooltip:
         )
 
         tip.pack()
-        self.tip_window.after(AUTO_CLOSE, self.hide)
+        self.tip_window.after(AUTO_CLOSE, self._hide)
 
-    def hide(self):
+    def _hide(self):
         if self.tip_window:
             self.tip_window.destroy()
 
-    def cancel_tip(self, event):
+    def _cancel_tip(self, event):
         self.widget.after_cancel(self.after_id)
-        self.hide()
+        self._hide()

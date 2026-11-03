@@ -28,7 +28,8 @@ class App:
         self.label = ttk.Label(self.root, text=DEFAULT_TEXT)
         self.label.grid(column=1, row=0, sticky='ew', padx=(0, 10))
 
-        Tooltip(self.label, DEFAULT_TEXT)
+        tooltip = Tooltip(self.label, DEFAULT_TEXT)
+        tooltip.bind()
 
         button = ttk.Button(self.root, text='CREATE WORKBOOK', command=self._create_workbook, takefocus=False)
         button.grid(row=1, column=0, columnspan=2)
