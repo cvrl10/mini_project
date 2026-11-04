@@ -5,7 +5,7 @@ a = Analysis(
     ['PARTICLE_SIZE_DISTRIBUTION.py'],
     pathex=[],
     binaries=[],
-    datas=[('img/logo.ico', '.')],
+    datas=[('img/blank.ico', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['img/logo.ico'],
+    icon=['img/blank.ico'],
 )

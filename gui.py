@@ -35,6 +35,8 @@ class App:
         button = ttk.Button(self.root, text='CREATE WORKBOOK', command=self._create_workbook, takefocus=False)
         button.grid(row=1, column=0, columnspan=2)
 
+        self.root.bind('<Escape>', lambda _: self.root.destroy())
+
     def _askdirectory(self):
         data_folder = filedialog.askdirectory(parent=self.root, title='Select Folder')
         if data_folder:
