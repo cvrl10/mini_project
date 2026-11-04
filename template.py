@@ -4,10 +4,6 @@ from pathlib import Path
 import os
 from math import ceil, floor
 
-#path = r'100048497'
-#path = r'100040000'
-#path = r'100040001'
-#directory = Path(path)
 
 class Template:
     def __init__(self, data_folder: Path):
@@ -39,8 +35,8 @@ class Template:
         hide_format = workbook.add_format({'font_color': 'white'})
 
         worksheet = self.writer.sheets[sheet_name]
-        worksheet.write(0, 0, 'Particle (N)', header_format)
-        worksheet.write(0, 1, 'Particle Size (nm)', header_format)
+        worksheet.write('A1', 'Particle (N)', header_format)
+        worksheet.write('B1', 'Particle Size (nm)', header_format)
         worksheet.autofit()
 
         worksheet.write('E1', 'min')
@@ -157,4 +153,4 @@ class Template:
             self._create_sheet(file)
 
         self.writer.close()
-        os.startfile(self.directory/f'_{self.directory.name}.xlsm')
+        os.startfile(self.writer.book.filename.name)
