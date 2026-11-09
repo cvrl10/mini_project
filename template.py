@@ -3,6 +3,52 @@ import re
 from pathlib import Path
 import os
 from math import ceil, floor
+from pptx import Presentation
+from pptx.util import Inches, Pt
+from pptx.enum.text import PP_ALIGN
+from pptx.dml.color import RGBColor
+
+
+class Report:
+    def __init__(self, data_folder: Path, samples):
+        self.directory = data_folder
+        self.samples = samples
+        self.presentation = Presentation('master_template.pptx')
+
+    def _create_background_slide(self):
+        presentation = self.presentation
+        slide = presentation.slides[1]
+
+        table = slide.shapes[0].table
+        cell = table.cell(2, 1)
+        cell.text = ''
+        paragraph = cell.text_frame.paragraphs[0]
+        samples = paragraph.add_run()
+        samples.text = ', '.join(Path(file).stem for file in self.samples)
+        samples.font.color.rgb = RGBColor(255, 0, 0)
+
+    def _create_image_slide(self, sample: str):
+        presentation = self.presentation
+        layout = presentation.slides[2].slide_layout
+        slide = presentation.slides.add_slide(layout)
+        paragraph = slide.placeholders[0].text_frame.paragraphs[0]
+        text = paragraph.add_run()
+        text.text = 'STEM images for: '
+
+        text = paragraph.add_run()
+        text.text = sample
+        text.font.bold = True
+        text.font.color.rgb = RGBColor(255, 0, 0)
+
+    def _create_slides(self):
+        self._create_background_slide()
+        for sample in [Path(file).stem for file in self.samples]:
+            self._create_image_slide(sample)
+
+    def create(self):
+        self._create_slides()
+        self.presentation.save(self.directory/f'_{self.directory.name}.pptx')
+        os.startfile(self.directory/f'_{self.directory.name}.pptx')
 
 
 class Template:
@@ -154,3 +200,13 @@ class Template:
 
         self.writer.close()
         os.startfile(self.writer.book.filename.name)
+
+
+path = '100040000'
+path = Path(path)
+
+template = Template(path)
+
+report = Report(path, samples=template.files)
+report.create()
+
