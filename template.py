@@ -4,8 +4,6 @@ from pathlib import Path
 import os
 from math import ceil, floor
 from pptx import Presentation
-from pptx.util import Inches, Pt
-from pptx.enum.text import PP_ALIGN
 from pptx.dml.color import RGBColor
 
 
@@ -13,7 +11,7 @@ class Report:
     def __init__(self, data_folder: Path, samples):
         self.directory = data_folder
         self.samples = samples
-        self.presentation = Presentation('master_template.pptx')
+        self.presentation = Presentation('report_template.pptx')
 
     def _create_background_slide(self):
         presentation = self.presentation
