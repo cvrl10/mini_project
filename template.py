@@ -185,7 +185,7 @@ class Template:
         })
 
         worksheet.insert_textbox('D5', f'''Average Particle Size: {series.mean():.2f} {chr(177)} {series.std():.2f} nm''',
-                                 {'width': 400,
+                                 {'width': 300,
                                   'font': {'bold': True},
                                   'line': {'none': True},
                                   'fill': {'none': True}})
