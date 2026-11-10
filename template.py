@@ -200,11 +200,12 @@ class Template:
         os.startfile(self.writer.book.filename.name)
 
 
-path = '100040000'
+path = '100040001'
 path = Path(path)
 
 template = Template(path)
+template.create_sheets()
 
 report = Report(path, samples=template.files)
-report.create()
+#report.create()
 
