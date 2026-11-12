@@ -5,6 +5,8 @@ import os
 from math import ceil, floor
 from pptx import Presentation
 from pptx.dml.color import RGBColor
+import win32com.client as win32
+import pywintypes
 
 
 class Report:
@@ -12,6 +14,21 @@ class Report:
         self.directory = data_folder
         self.samples = samples
         self.presentation = Presentation('report_template.pptx')
+
+    def extract_chart(self):
+        directory = Path(self.directory/'chart(s)')
+        directory.mkdir(exist_ok=True)
+
+        workbook = (self.directory/f'_{self.directory.name}.xlsm').resolve().__str__()
+        excel = win32.Dispatch('Excel.Application')
+
+        try:
+            wb = excel.Workbooks(workbook)
+            excel.Run(f'{wb.Name}!Module3.ExportGroupedChartTextBox')
+        except pywintypes.com_error:
+            wb = excel.Workbooks.Open(workbook)
+            excel.Run(f'{wb.Name}!Module3.ExportGroupedChartTextBox')
+            wb.Close(SaveChanges=False)
 
     def _create_background_slide(self):
         presentation = self.presentation
@@ -203,9 +220,12 @@ class Template:
 path = '100040001'
 path = Path(path)
 
-template = Template(path)
-template.create_sheets()
+#template = Template(path)
+#template.create_sheets()
 
-report = Report(path, samples=template.files)
+#report = Report(path, samples=template.files)
+report = Report(path, samples=[])
+report.extract_chart()
 #report.create()
+
 
