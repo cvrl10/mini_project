@@ -19,14 +19,17 @@ class Report:
         directory = Path(self.directory/'chart(s)')
         directory.mkdir(exist_ok=True)
 
-        workbook = (self.directory/f'_{self.directory.name}.xlsm').resolve().__str__()
+        workbook = self.directory/f'_{self.directory.name}.xlsm'
         excel = win32.Dispatch('Excel.Application')
 
         try:
-            wb = excel.Workbooks(workbook)
+            print(f'inside excel.Workbooks, workbook.name: {workbook.name}')
+            wb = excel.Workbooks(workbook.name)
             excel.Run(f'{wb.Name}!Module3.ExportGroupedChartTextBox')
+            print('workbook opened')
         except pywintypes.com_error:
-            wb = excel.Workbooks.Open(workbook)
+            print('workbook not opened')
+            wb = excel.Workbooks.Open(workbook.resolve().__str__())
             excel.Run(f'{wb.Name}!Module3.ExportGroupedChartTextBox')
             wb.Close(SaveChanges=False)
 
@@ -41,6 +44,31 @@ class Report:
         samples = paragraph.add_run()
         samples.text = ', '.join(Path(file).stem for file in self.samples)
         samples.font.color.rgb = RGBColor(255, 0, 0)
+
+    def _create_chart_slide(self, sample: str):
+        presentation = self.presentation
+        layout = presentation.slides[3].slide_layout
+        slide = presentation.slides.add_slide(layout)
+
+        paragraph = slide.placeholders[0].text_frame.paragraphs[0]
+        text = paragraph.add_run()
+        text.text = 'Particle Size Distribution (PSD) Graph for: '
+
+        text = paragraph.add_run()
+        text.text = sample
+        text.font.bold = True
+        text.font.color.rgb = RGBColor(255, 0, 0)
+        '''
+        for ph in slide.placeholders:
+            fmt = ph.placeholder_format
+            print(fmt.idx, ph.name, fmt.type)'''
+        image = slide.placeholders[21]#do not hardcode this, template is subject to change or you can name them
+        image.insert_picture((self.directory/f'chart(s)/{sample}.png').resolve().__str__())
+
+        #df = pd.read_excel(path, header=None, names=['Particle (N)', 'Particle Size (nm)'])
+        paragraph = slide.placeholders[19].text_frame.paragraphs[0]
+        text = paragraph.add_run()
+        text.text = 'A total of 200 particles were analyzed to determine the average particle size of the catalyst'
 
     def _create_image_slide(self, sample: str):
         presentation = self.presentation
@@ -57,8 +85,10 @@ class Report:
 
     def _create_slides(self):
         self._create_background_slide()
+        self.extract_chart()#make this private
         for sample in [Path(file).stem for file in self.samples]:
             self._create_image_slide(sample)
+            self._create_chart_slide(sample)
 
     def create(self):
         self._create_slides()
@@ -207,6 +237,8 @@ class Template:
                                   'line': {'none': True},
                                   'fill': {'none': True}})
 
+        chart.set_chartarea({'border': {'none': True}})#
+
         worksheet.insert_chart('D5', chart)
 
     def create_sheets(self):
@@ -221,11 +253,14 @@ path = '100040001'
 path = Path(path)
 
 #template = Template(path)
+#template.writer.close()
 #template.create_sheets()
-
+#'''
+samples = ['200123417', '200123418']
 #report = Report(path, samples=template.files)
-report = Report(path, samples=[])
-report.extract_chart()
-#report.create()
+report = Report(path, samples=samples)
+#report.extract_chart()
+report.create()
+#'''
 
 
