@@ -65,10 +65,11 @@ class Report:
         image = slide.placeholders[21]#do not hardcode this, template is subject to change or you can name them
         image.insert_picture((self.directory/f'chart(s)/{sample}.png').resolve().__str__())
 
-        #df = pd.read_excel(path, header=None, names=['Particle (N)', 'Particle Size (nm)'])
+        data_file = self.directory/f'{sample}.xlsx'
+        df = pd.read_excel(data_file, header=None)
         paragraph = slide.placeholders[19].text_frame.paragraphs[0]
         text = paragraph.add_run()
-        text.text = 'A total of 200 particles were analyzed to determine the average particle size of the catalyst'
+        text.text = f'A total of {len(df)} particles were analyzed to determine the average particle size of the catalyst'
 
     def _create_image_slide(self, sample: str):
         presentation = self.presentation
@@ -78,10 +79,19 @@ class Report:
         text = paragraph.add_run()
         text.text = 'STEM images for: '
 
+        #'''
+        for ph in slide.placeholders:
+            fmt = ph.placeholder_format
+            print(fmt.idx, ph.name, fmt.type)#'''
+
         text = paragraph.add_run()
         text.text = sample
         text.font.bold = True
         text.font.color.rgb = RGBColor(255, 0, 0)
+
+        paragraph = slide.placeholders[19].text_frame.paragraphs[0]
+        text = paragraph.add_run()
+        text.text = 'The bright spots are _ particles (HAADF was used, so heavier elements appear bright) and EDS was used to ensure nothing else was present'
 
     def _create_slides(self):
         self._create_background_slide()
@@ -90,8 +100,17 @@ class Report:
             self._create_image_slide(sample)
             self._create_chart_slide(sample)
 
+    def _remove_slides(self, indices: list):
+        indices.reverse()
+        presentation = self.presentation
+        for i in indices:
+            slide_entry = presentation.slides._sldIdLst[i]
+            presentation.slides._sldIdLst.remove(slide_entry)
+            presentation.part.drop_rel(slide_entry.rId)
+
     def create(self):
         self._create_slides()
+        self._remove_slides([2,3,4])
         self.presentation.save(self.directory/f'_{self.directory.name}.pptx')
         os.startfile(self.directory/f'_{self.directory.name}.pptx')
 
@@ -250,15 +269,18 @@ class Template:
 
 
 path = '100040001'
-path = Path(path)
+path = '100040000'
+path = Path(path).resolve()
 
-#template = Template(path)
+'''
+template = Template(path)
 #template.writer.close()
-#template.create_sheets()
-#'''
+template.create_sheets()#'''
+
 samples = ['200123417', '200123418']
+samples = ['200122941', '200122942']
 #report = Report(path, samples=template.files)
-report = Report(path, samples=samples)
+report = Report(data_folder=path, samples=samples)
 #report.extract_chart()
 report.create()
 #'''

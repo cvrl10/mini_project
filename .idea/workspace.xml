@@ -5,16 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7a5f83f0-6a07-4e6c-99fd-dec6f6610c8d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/mini_project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/mini_project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/100040001/_100040001.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/100040001/_100040001.xlsm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040000/_100040000.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/_100040000.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040000/_100040000.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/_100040000.xlsm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040001/_100040001.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/100040001/_100040001.pptx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/100040001/chart(s)/200123417.png" beforeDir="false" afterPath="$PROJECT_DIR$/100040001/chart(s)/200123417.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/100040001/chart(s)/200123418.png" beforeDir="false" afterPath="$PROJECT_DIR$/100040001/chart(s)/200123418.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macros.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/macros.xlsm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040001/~$_100040001.pptx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/report_template.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/report_template.pptx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template.py" beforeDir="false" afterPath="$PROJECT_DIR$/template.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vbaProject.bin" beforeDir="false" afterPath="$PROJECT_DIR$/vbaProject.bin" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
