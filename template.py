@@ -10,12 +10,13 @@ import pywintypes
 
 
 class Report:
-    def __init__(self, data_folder: Path, samples):
+    def __init__(self, data_folder: Path, samples: list, STEM_EDS: bool):
         self.directory = data_folder
         self.samples = samples
+        self.STEM_EDS = STEM_EDS
         self.presentation = Presentation('report_template.pptx')
 
-    def extract_chart(self):
+    def _extract_chart(self):
         directory = Path(self.directory/'chart(s)')
         directory.mkdir(exist_ok=True)
 
@@ -23,7 +24,6 @@ class Report:
         excel = win32.Dispatch('Excel.Application')
 
         try:
-            print(f'inside excel.Workbooks, workbook.name: {workbook.name}')
             wb = excel.Workbooks(workbook.name)
             excel.Run(f'{wb.Name}!Module3.ExportGroupedChartTextBox')
             print('workbook opened')
@@ -93,24 +93,41 @@ class Report:
         text = paragraph.add_run()
         text.text = 'The bright spots are _ particles (HAADF was used, so heavier elements appear bright) and EDS was used to ensure nothing else was present'
 
+    def _create_stem_eds_slide(self, sample: str):
+        if self.STEM_EDS:
+            presentation = self.presentation
+            layout = presentation.slides[4].slide_layout
+            slide = presentation.slides.add_slide(layout)
+
+            paragraph = slide.placeholders[0].text_frame.paragraphs[0]
+            title = paragraph.add_run()
+            title.text = 'STEM-EDS image for: '
+
+            title = paragraph.add_run()
+            title.text = sample
+            title.font.bold = True
+            title.font.color.rgb = RGBColor(255, 0, 0)
+
     def _create_slides(self):
         self._create_background_slide()
-        self.extract_chart()#make this private
+        self._extract_chart()
         for sample in [Path(file).stem for file in self.samples]:
             self._create_image_slide(sample)
             self._create_chart_slide(sample)
+            self._create_stem_eds_slide(sample)
 
-    def _remove_slides(self, indices: list):
-        indices.reverse()
+    def _delete_slides(self, *slides):
+        slides = list(slides)
+        slides.reverse()
         presentation = self.presentation
-        for i in indices:
-            slide_entry = presentation.slides._sldIdLst[i]
-            presentation.slides._sldIdLst.remove(slide_entry)
-            presentation.part.drop_rel(slide_entry.rId)
+        for i in slides:
+            slide = presentation.slides._sldIdLst[i]
+            presentation.slides._sldIdLst.remove(slide)
+            presentation.part.drop_rel(slide.rId)
 
     def create(self):
         self._create_slides()
-        self._remove_slides([2,3,4])
+        self._delete_slides(2, 3, 4)
         self.presentation.save(self.directory/f'_{self.directory.name}.pptx')
         os.startfile(self.directory/f'_{self.directory.name}.pptx')
 
@@ -181,7 +198,6 @@ class Template:
 
         worksheet.write('M1', 'Frequency')
         worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&_xlfn.ANCHORARRAY(K2), B2:B{end_row}, "<"&(_xlfn.ANCHORARRAY(K2)+$J$2))''')
-        #worksheet.write_dynamic_array_formula('M2', f'''=COUNTIFS(B2:B{end_row}, ">="&(_xlfn.ANCHORARRAY(K2)-$J$2), B2:B{end_row}, "<"&_xlfn.ANCHORARRAY(K2))''')#used this equation to match exactly what Gyan does
 
         worksheet.write('O1', 'start_bin', hide_format)
         worksheet.write_formula('O2', '=FLOOR(E2,J2)', hide_format)
@@ -277,10 +293,12 @@ template = Template(path)
 #template.writer.close()
 template.create_sheets()#'''
 
+STEM_EDS = 1
+
 samples = ['200123417', '200123418']
-samples = ['200122941', '200122942']
+samples = ['200122941', '200122942', '200122943']
 #report = Report(path, samples=template.files)
-report = Report(data_folder=path, samples=samples)
+report = Report(data_folder=path, samples=samples, STEM_EDS=STEM_EDS)
 #report.extract_chart()
 report.create()
 #'''
