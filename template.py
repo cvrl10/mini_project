@@ -10,10 +10,9 @@ import pywintypes
 
 
 class Report:
-    def __init__(self, data_folder: Path, samples: list, STEM_EDS: bool):
+    def __init__(self, data_folder: Path, samples: list):
         self.directory = data_folder
         self.samples = samples
-        self.STEM_EDS = STEM_EDS
         self.presentation = Presentation('report_template.pptx')
 
     def _extract_chart(self):
@@ -93,11 +92,28 @@ class Report:
         text = paragraph.add_run()
         text.text = 'The bright spots are _ particles (HAADF was used, so heavier elements appear bright) and EDS was used to ensure nothing else was present'
 
-    def _create_stem_eds_slide(self, sample: str):
-        if self.STEM_EDS:
+    def _create_stem_eds_slide(self, sample: str, STEM_EDS: bool):
+        if STEM_EDS:
             presentation = self.presentation
             layout = presentation.slides[4].slide_layout
             slide = presentation.slides.add_slide(layout)
+
+            tables = [shape for shape in slide.slide_layout.shapes if shape.has_table]
+            #print(tables)
+            for shape in slide.slide_layout.shapes:
+                print(shape)
+                print(shape.has_table)
+
+
+            print('inside create_stem_eds_slide\n')
+            '''for ph in layout.placeholders:
+                fmt = ph.placeholder_format
+                print(fmt.idx, ph.name, fmt.type)  # '''
+
+            #table_0 = slide.placeholders[13].table
+            #table_1 = slide.placeholders[14].table
+
+            #print(table_0)
 
             paragraph = slide.placeholders[0].text_frame.paragraphs[0]
             title = paragraph.add_run()
@@ -108,13 +124,13 @@ class Report:
             title.font.bold = True
             title.font.color.rgb = RGBColor(255, 0, 0)
 
-    def _create_slides(self):
+    def _create_slides(self, STEM_EDS: bool):
         self._create_background_slide()
         self._extract_chart()
         for sample in [Path(file).stem for file in self.samples]:
             self._create_image_slide(sample)
             self._create_chart_slide(sample)
-            self._create_stem_eds_slide(sample)
+            self._create_stem_eds_slide(sample, STEM_EDS=STEM_EDS)
 
     def _delete_slides(self, *slides):
         slides = list(slides)
@@ -125,8 +141,8 @@ class Report:
             presentation.slides._sldIdLst.remove(slide)
             presentation.part.drop_rel(slide.rId)
 
-    def create(self):
-        self._create_slides()
+    def create_slides(self, STEM_EDS: bool):
+        self._create_slides(STEM_EDS=STEM_EDS)
         self._delete_slides(2, 3, 4)
         self.presentation.save(self.directory/f'_{self.directory.name}.pptx')
         os.startfile(self.directory/f'_{self.directory.name}.pptx')
@@ -293,14 +309,13 @@ template = Template(path)
 #template.writer.close()
 template.create_sheets()#'''
 
-STEM_EDS = 1
+STEM_EDS = True
 
 samples = ['200123417', '200123418']
 samples = ['200122941', '200122942', '200122943']
 #report = Report(path, samples=template.files)
-report = Report(data_folder=path, samples=samples, STEM_EDS=STEM_EDS)
-#report.extract_chart()
-report.create()
+report = Report(data_folder=path, samples=samples)
+report.create_slides(STEM_EDS=STEM_EDS)
 #'''
 
 
