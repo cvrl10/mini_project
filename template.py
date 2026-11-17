@@ -5,8 +5,10 @@ import os
 from math import ceil, floor
 from pptx import Presentation
 from pptx.dml.color import RGBColor
+from pptx.util import Pt
 import win32com.client as win32
 import pywintypes
+from copy import deepcopy
 
 
 class Report:
@@ -31,6 +33,17 @@ class Report:
             wb = excel.Workbooks.Open(workbook.resolve().__str__())
             excel.Run(f'{wb.Name}!Module3.ExportGroupedChartTextBox')
             wb.Close(SaveChanges=False)
+
+    def _create_report_slide(self):
+        presentation = self.presentation
+        slide = presentation.slides[0]
+
+        table = slide.shapes[0].table
+        cell = table.cell(5, 0)
+        print(cell.text)
+        for sample in self.samples:
+            paragraph = cell.text_frame.add_paragraph()
+            paragraph.text = f'{sample}: '
 
     def _create_background_slide(self):
         presentation = self.presentation
@@ -92,28 +105,36 @@ class Report:
         text = paragraph.add_run()
         text.text = 'The bright spots are _ particles (HAADF was used, so heavier elements appear bright) and EDS was used to ensure nothing else was present'
 
-    def _create_stem_eds_slide(self, sample: str, STEM_EDS: bool):
-        if STEM_EDS:
+    def _create_stem_eds_slide(self, sample: str, rows: int):
+        def configure_table(table):
+            for i, col in enumerate(layout_table.columns):
+                table.columns[i].width = col.width
+
+            table.cell(0, 0).text = 'Element'
+            table.cell(0, 0).text_frame.paragraphs[0].runs[0].font.size = Pt(20)
+            table.cell(0, 1).text = 'Atomic Fraction (%)'
+            table.cell(0, 1).text_frame.paragraphs[0].runs[0].font.size = Pt(20)
+            table.cell(0, 2).text = 'Mass Fraction (%)'
+            table.cell(0, 2).text_frame.paragraphs[0].runs[0].font.size = Pt(20)
+
+        presentation = self.presentation
+        master_layout = presentation.slides[4].slide_layout
+
+        layout_table, = [shape.table for shape in master_layout.shapes if shape.has_table]
+
+        if rows:
             presentation = self.presentation
-            layout = presentation.slides[4].slide_layout
+            layout = presentation.slides[5].slide_layout
             slide = presentation.slides.add_slide(layout)
-
-            tables = [shape for shape in slide.slide_layout.shapes if shape.has_table]
-            #print(tables)
-            for shape in slide.slide_layout.shapes:
-                print(shape)
-                print(shape.has_table)
-
-
-            print('inside create_stem_eds_slide\n')
-            '''for ph in layout.placeholders:
+            '''
+            for ph in layout.placeholders:
                 fmt = ph.placeholder_format
                 print(fmt.idx, ph.name, fmt.type)  # '''
 
-            #table_0 = slide.placeholders[13].table
-            #table_1 = slide.placeholders[14].table
-
-            #print(table_0)
+            table_0 = slide.placeholders[15].insert_table(rows=rows+1, cols=len(layout_table.columns)).table
+            table_1 = slide.placeholders[16].insert_table(rows=rows+1, cols=len(layout_table.columns)).table
+            configure_table(table_0)
+            configure_table(table_1)
 
             paragraph = slide.placeholders[0].text_frame.paragraphs[0]
             title = paragraph.add_run()
@@ -124,13 +145,14 @@ class Report:
             title.font.bold = True
             title.font.color.rgb = RGBColor(255, 0, 0)
 
-    def _create_slides(self, STEM_EDS: bool):
+    def _create_slides(self, STEM_EDS: int):
+        self._create_report_slide()
         self._create_background_slide()
         self._extract_chart()
         for sample in [Path(file).stem for file in self.samples]:
             self._create_image_slide(sample)
             self._create_chart_slide(sample)
-            self._create_stem_eds_slide(sample, STEM_EDS=STEM_EDS)
+            self._create_stem_eds_slide(sample, rows=STEM_EDS)
 
     def _delete_slides(self, *slides):
         slides = list(slides)
@@ -143,7 +165,7 @@ class Report:
 
     def create_slides(self, STEM_EDS: bool):
         self._create_slides(STEM_EDS=STEM_EDS)
-        self._delete_slides(2, 3, 4)
+        self._delete_slides(2, 3, 4, 5)
         self.presentation.save(self.directory/f'_{self.directory.name}.pptx')
         os.startfile(self.directory/f'_{self.directory.name}.pptx')
 
@@ -309,7 +331,7 @@ template = Template(path)
 #template.writer.close()
 template.create_sheets()#'''
 
-STEM_EDS = True
+STEM_EDS = 3
 
 samples = ['200123417', '200123418']
 samples = ['200122941', '200122942', '200122943']
