@@ -6,9 +6,9 @@ from math import ceil, floor
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.util import Pt
+from pptx.oxml.xmlchemy import OxmlElement
 import win32com.client as win32
 import pywintypes
-from copy import deepcopy
 
 
 class Report:
@@ -40,10 +40,21 @@ class Report:
 
         table = slide.shapes[0].table
         cell = table.cell(5, 0)
-        print(cell.text)
         for sample in self.samples:
+            data_file = self.directory / f'{sample}'
+            df = pd.read_excel(data_file, header=None, names=['Particle (N)', 'Particle Size (nm)'])
             paragraph = cell.text_frame.add_paragraph()
-            paragraph.text = f'{sample}: '
+            paragraph.text = f' {Path(sample).stem}: '
+
+            paragraph_properties = paragraph._p.get_or_add_pPr()
+            numbering = OxmlElement('a:buAutoNum')
+            numbering.set('type', 'arabicParenR')
+            paragraph_properties.append(numbering)
+
+            series = df['Particle Size (nm)']
+            text = paragraph.add_run()
+            text.text = f'{series.mean():.2f} {chr(177)} {series.std():.2f} nm'
+            text.font.color.rgb = RGBColor(255, 0, 0)
 
     def _create_background_slide(self):
         presentation = self.presentation
@@ -81,7 +92,7 @@ class Report:
         df = pd.read_excel(data_file, header=None)
         paragraph = slide.placeholders[19].text_frame.paragraphs[0]
         text = paragraph.add_run()
-        text.text = f'A total of {len(df)} particles were analyzed to determine the average particle size of the catalyst'
+        text.text = f'A total of {len(df)} particles were analyzed to determine the average particle size of the catalyst.'
 
     def _create_image_slide(self, sample: str):
         presentation = self.presentation
@@ -103,7 +114,7 @@ class Report:
 
         paragraph = slide.placeholders[19].text_frame.paragraphs[0]
         text = paragraph.add_run()
-        text.text = 'The bright spots are _ particles (HAADF was used, so heavier elements appear bright) and EDS was used to ensure nothing else was present'
+        text.text = 'The bright spots are _ particles (HAADF was used, so heavier elements appear bright) and EDS was used to ensure nothing else was present.'
 
     def _create_stem_eds_slide(self, sample: str, rows: int):
         def configure_table(table):
@@ -304,7 +315,7 @@ class Template:
             }
         })
 
-        worksheet.insert_textbox('D5', f'''Average Particle Size: {series.mean():.2f} {chr(177)} {series.std():.2f} nm''',
+        worksheet.insert_textbox('D5', f'Average Particle Size: {series.mean():.2f} {chr(177)} {series.std():.2f} nm',
                                  {'width': 300,
                                   'font': {'bold': True},
                                   'line': {'none': True},
@@ -324,6 +335,7 @@ class Template:
 
 path = '100040001'
 path = '100040000'
+#path = '100040002'
 path = Path(path).resolve()
 
 '''
@@ -331,11 +343,11 @@ template = Template(path)
 #template.writer.close()
 template.create_sheets()#'''
 
-STEM_EDS = 3
+STEM_EDS = 1
 
 samples = ['200123417', '200123418']
-samples = ['200122941', '200122942', '200122943']
-#report = Report(path, samples=template.files)
+samples = ['200122941.xlsx', '200122942.xlsx', '200122943.xlsx']
+#eport = Report(path, samples=template.files)
 report = Report(data_folder=path, samples=samples)
 report.create_slides(STEM_EDS=STEM_EDS)
 #'''

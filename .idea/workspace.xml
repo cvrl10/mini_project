@@ -5,9 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="054779ae-b88e-4592-b401-628d90aa1a31" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/mini_project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/mini_project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/100040000/_100040000.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/_100040000.pptx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/report_template.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/report_template.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040000/_100040000.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/_100040000.xlsm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040000/chart(s)/200122941.png" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/chart(s)/200122941.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040000/chart(s)/200122942.png" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/chart(s)/200122942.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040000/chart(s)/200122943.png" beforeDir="false" afterPath="$PROJECT_DIR$/100040000/chart(s)/200122943.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/100040002/_100040002.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/100040002/_100040002.xlsm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template.py" beforeDir="false" afterPath="$PROJECT_DIR$/template.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
