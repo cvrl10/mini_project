@@ -10,18 +10,29 @@ from pptx.oxml.xmlchemy import OxmlElement
 import win32com.client as win32
 import pywintypes
 
+DATA_FOLDER = None
+
+def data_files():
+    global DATA_FOLDER
+    source_files = []
+    for path in DATA_FOLDER.resolve().glob('*'):
+        if re.fullmatch(f'[0-9]+', path.stem):
+            source_files.append(path.name)
+    source_files.sort()
+    return source_files
 
 class Report:
-    def __init__(self, data_folder: Path, samples: list):
-        self.directory = data_folder
-        self.samples = samples
+    def __init__(self, data_folder: Path):
+        global DATA_FOLDER
+        DATA_FOLDER = data_folder
+        self.samples = data_files()
         self.presentation = Presentation('report_template.pptx')
 
     def _extract_chart(self):
-        directory = Path(self.directory/'chart(s)')
+        directory = Path(DATA_FOLDER/'chart(s)')
         directory.mkdir(exist_ok=True)
 
-        workbook = self.directory/f'_{self.directory.name}.xlsm'
+        workbook = DATA_FOLDER/f'_{DATA_FOLDER.name}.xlsm'
         excel = win32.Dispatch('Excel.Application')
 
         try:
@@ -41,7 +52,7 @@ class Report:
         table = slide.shapes[0].table
         cell = table.cell(5, 0)
         for sample in self.samples:
-            data_file = self.directory / f'{sample}'
+            data_file = DATA_FOLDER / f'{sample}'
             df = pd.read_excel(data_file, header=None, names=['Particle (N)', 'Particle Size (nm)'])
             paragraph = cell.text_frame.add_paragraph()
             paragraph.text = f' {Path(sample).stem}: '
@@ -86,9 +97,9 @@ class Report:
             fmt = ph.placeholder_format
             print(fmt.idx, ph.name, fmt.type)'''
         image = slide.placeholders[21]#do not hardcode this, template is subject to change or you can name them
-        image.insert_picture((self.directory/f'chart(s)/{sample}.png').resolve().__str__())
+        image.insert_picture((DATA_FOLDER/f'chart(s)/{sample}.png').resolve().__str__())
 
-        data_file = self.directory/f'{sample}.xlsx'
+        data_file = DATA_FOLDER/f'{sample}.xlsx'
         df = pd.read_excel(data_file, header=None)
         paragraph = slide.placeholders[19].text_frame.paragraphs[0]
         text = paragraph.add_run()
@@ -174,30 +185,26 @@ class Report:
             presentation.slides._sldIdLst.remove(slide)
             presentation.part.drop_rel(slide.rId)
 
-    def create_slides(self, STEM_EDS: bool):
+    def create_slides(self, STEM_EDS: int):
         self._create_slides(STEM_EDS=STEM_EDS)
         self._delete_slides(2, 3, 4, 5)
-        self.presentation.save(self.directory/f'_{self.directory.name}.pptx')
-        os.startfile(self.directory/f'_{self.directory.name}.pptx')
+        self.presentation.save(DATA_FOLDER/f'_{DATA_FOLDER.name}.pptx')
+        os.startfile(DATA_FOLDER/f'_{DATA_FOLDER.name}.pptx')
 
 
 class Template:
     def __init__(self, data_folder: Path):
-        self.directory = data_folder
-        self.writer = pd.ExcelWriter(self.directory / f'_{self.directory.name}.xlsm', engine='xlsxwriter')
+        global DATA_FOLDER
+        DATA_FOLDER = data_folder
+        self.writer = pd.ExcelWriter(DATA_FOLDER / f'_{DATA_FOLDER.name}.xlsm', engine='xlsxwriter')
         self.writer.book.add_vba_project('vbaProject.bin')
 
     @property
     def files(self):
-        source_files = []
-        for path in self.directory.resolve().glob('*'):
-            if re.fullmatch(f'[0-9]+', path.stem):
-                source_files.append(path.name)
-        source_files.sort()
-        return source_files
+        return data_files()
 
     def _create_sheet(self, file: str):
-        path = self.directory / file
+        path = DATA_FOLDER / file
         sheet_name = path.stem
         df = pd.read_excel(path, header=None, names=['Particle (N)', 'Particle Size (nm)'])
         df.to_excel(self.writer, sheet_name=sheet_name, index=False)
@@ -335,20 +342,17 @@ class Template:
 
 path = '100040001'
 path = '100040000'
-#path = '100040002'
+path = '100040002'
 path = Path(path).resolve()
 
 '''
-template = Template(path)
-#template.writer.close()
-template.create_sheets()#'''
+#template = Template(path)
+#template.create_sheets()#'''
 
-STEM_EDS = 1
+STEM_EDS = 0
 
-samples = ['200123417', '200123418']
-samples = ['200122941.xlsx', '200122942.xlsx', '200122943.xlsx']
-#eport = Report(path, samples=template.files)
-report = Report(data_folder=path, samples=samples)
+'''
+report = Report(data_folder=path)
 report.create_slides(STEM_EDS=STEM_EDS)
 #'''
 
