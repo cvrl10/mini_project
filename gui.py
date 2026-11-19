@@ -17,7 +17,6 @@ class App:
         self.root.title('PARTICLE SIZE DISTRIBUTION (PSD)')
         self.root.iconbitmap('img/blank.ico')
 
-        self.root.geometry('500x70')
         self.root.geometry('500x110')
         self.root.resizable(False, False)
 
@@ -38,21 +37,19 @@ class App:
         tooltip = Tooltip(self.label, DEFAULT_TEXT)
         tooltip.bind()
 
-        button = ttk.Button(self.root, text='CREATE WORKBOOK', command=self._create_workbook, takefocus=False)
+        button = ttk.Button(self.root, text='CREATE WORKBOOK', command=self._create_workbook, takefocus=False, width=19)
         button.grid(row=1, column=0, columnspan=2)
 
         self.STEM_EDS_ROW = tk.IntVar(value=0)
 
         label = ttk.Label(self.root, text='STEM-EDS')
-        label.grid(row=2, column=0, columnspan=2, padx=(0, 64))
+        label.grid(row=2, column=0, columnspan=2, padx=(0, 65))
         spinbox = Spinbox(self.root, from_=0, to=118, width=3, textvariable=self.STEM_EDS_ROW)
-        spinbox.grid(row=2, column=0, columnspan=2, padx=(86, 0))
+        spinbox.grid(row=2, column=0, columnspan=2, padx=(90, 0))
 
-        self.report_button = ttk.Button(self.root, text='CREATE REPORT', command=self._create_report, takefocus=False)
+        self.report_button = ttk.Button(self.root, text='CREATE REPORT', command=self._create_report, takefocus=False, width=19)
         self.report_button.grid(row=3, column=0, columnspan=2)
         self.report_button.state(['disabled'])
-
-
 
         self.root.bind('<Escape>', lambda _: self.root.destroy())
 
@@ -79,12 +76,11 @@ class App:
     def _create_report(self):
         data_folder = self.label.cget('text')
         data_folder = Path(data_folder)
-        file = data_folder/f'_{data_folder}.pptx'
+        file = data_folder/f'_{data_folder.name}.pptx'
         powerpoint = win32.Dispatch('PowerPoint.Application')
+
         try:
             presentation = powerpoint.Presentations(file.name)
-            print(presentation)
-            #presentation.Save()
             presentation.close()
         except pywintypes.com_error:
             #print(e)
@@ -103,6 +99,3 @@ class App:
     def run(self):
         self.root.deiconify()
         self.root.mainloop()
-
-app = App()
-app.run()
